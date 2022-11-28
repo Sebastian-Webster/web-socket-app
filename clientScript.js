@@ -85,6 +85,8 @@ nameForm.addEventListener('submit', function (e) {
         nameFormContainer.className = 'hidden' //remove name form once chosen
         chatForm.className = '' //and show chat form by removing hidden class
         chatMessage.focus()
+    } else {
+        useDefaultNickname()
     }
 });
 
@@ -92,6 +94,7 @@ function useDefaultNickname() {
     nameFormContainer.className = 'hidden' //remove name form once chosen
     chatForm.className = '' //and show chat form by removing hidden class
     socket.emit('useDefaultName')
+    chatMessage.focus()
 }
 
 socket.on('new user', (msg) => {printMsg(msg, ['newUser', 'middleChat']) })

@@ -38,7 +38,7 @@ function emitToJoinedClients(event, data) {
 io.on('connection', (socket) => {
     socket.emit('defaultName', socket.id)
     users.set(socket.id, socket.id.toString())
-    socket.on('new user', () => {;
+    socket.on('new user', () => {
         //socket.broadcast.emit('new user', 'new user has joined the chat') //sends to all but the initiating socket
         socket.emit('new user', {nickname: null, text: `Hello and welcome to this chat!`}) //send to only the initiating socket
         sendUpdatedClientCount()
@@ -57,8 +57,8 @@ io.on('connection', (socket) => {
     });    
 
     socket.on('disconnect', () => {
-        sendUpdatedClientCount()
         joinedUsers.delete(socket.id)
+        sendUpdatedClientCount()
         emitToJoinedClients('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
         
     })
