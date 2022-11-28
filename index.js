@@ -12,11 +12,14 @@ app.get('/', (req, res) => {
 
 app.get('/:file', (req, res) => {
     res.sendFile(__dirname + `/${req.params.file}`);
-  });
+});
+
+const users = new Map();
 
 io.on('connection', (socket) => {
     let totalUser = io.engine.clientsCount;
     socket.emit('defaultName', socket.id)
+    users.set(socket.id, socket.id.toString())
     socket.on('new user', () => {;
         //socket.broadcast.emit('new user', 'new user has joined the chat') //sends to all but the initiating socket
         io.emit('new user', {userCount: totalUser, nickname: null, text: `Hello and welcome to this chat!`}) //send to only the initiating socket
@@ -24,18 +27,18 @@ io.on('connection', (socket) => {
 
 
     socket.on('chat message', (msg) => {
-        io.emit('chat message', msg); //sends to all connected sockets
+        io.emit('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User'}); //sends to all connected sockets
     });
 
     socket.on('choose name', (name) => {
         console.log(totalUser)
         socket.emit('new user', {userCount: totalUser, nickname: name, text: 'has joined the chat'}) //sends to all but the initiating socket
-        socket.id = name;
+        users.set(socket.id, name)
     });    
 
     socket.on('disconnect', () => {
         totalUser = io.engine.clientsCount;
-        io.emit('disconnected', {userCount: totalUser, nickname: socket.id, text: 'has left the chat'}) //sends to all but the initiating socket
+        io.emit('disconnected', {userCount: totalUser, nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
         
     })
 

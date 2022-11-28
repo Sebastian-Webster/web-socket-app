@@ -28,7 +28,7 @@ function updateUserCount(userCount) {
 chatForm.addEventListener('submit', function (e) {
     e.preventDefault();
     if (chatMessage.value) {
-        socket.emit('chat message', { nickname: nickname.value, text: chatMessage.value });
+        socket.emit('chat message', chatMessage.value);
         chatMessage.value = '';
     }
 });
