@@ -16,6 +16,7 @@ app.get('/:file', (req, res) => {
 
 io.on('connection', (socket) => {
     let totalUser = io.engine.clientsCount;
+    socket.emit('defaultName', socket.id)
     socket.on('new user', () => {;
         //socket.broadcast.emit('new user', 'new user has joined the chat') //sends to all but the initiating socket
         io.emit('new user', {userCount: totalUser, nickname: null, text: `Hello and welcome to this chat!`}) //send to only the initiating socket

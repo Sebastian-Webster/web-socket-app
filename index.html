@@ -12,16 +12,20 @@
     <h1>Dark mode coming soon</h1>
     <h1>Online: <span id="userCount"></span></h1>
   </header>
-  <h2> There are <span id="userCount"></span> users in this room. </h2>
   <ul id="messages"></ul>
-
-  <form id="nameForm" action="">
-    <label>Choose a nickname to join the chat: <input id="nickname" autocomplete="off" /></label><button>Send</button>
-  </form>
 
   <form id="chatForm" action="" class="hidden">
     <input id="chatMessage" autocomplete="off" /><button>Send</button>
   </form>
+
+  <div id="nameFormContainer">
+    <form id="nameForm" action="">
+      <label>Choose a nickname to join the chat:</label>
+      <input id="nickname" autocomplete="off" />
+      <input type="submit" value="Send"/>
+      <button onclick="useDefaultNickname()">Or use default nickname: <span id="defaultNickname">Loading...</span></button>
+    </form>
+  </div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="clientScript.js"></script>

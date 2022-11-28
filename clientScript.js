@@ -4,7 +4,11 @@ var messages = document.getElementById('messages');
 var chatForm = document.getElementById('chatForm');
 var chatMessage = document.getElementById('chatMessage');
 var nickname = document.getElementById('nickname');
+var defaultNicknameText = document.getElementById('defaultNickname');
+var nameForm = document.getElementById('nameForm');
+var nameFormContainer = document.getElementById('nameFormContainer')
 let userCount = 0;
+let defaultNickname = '';
 
 window.onload = () => socket.emit('new user') 
 
@@ -33,12 +37,21 @@ nameForm.addEventListener('submit', function (e) {
     e.preventDefault();
     if (nickname.value) {
         socket.emit('choose name', nickname.value);
-        nameForm.className = 'hidden' //remove name form once chosen
+        nameFormContainer.className = 'hidden' //remove name form once chosen
         chatForm.className = '' //and show chat form by removing hidden class
         chatMessage.focus()
     }
 });
 
+function useDefaultNickname() {
+    nameFormContainer.className = 'hidden' //remove name form once chosen
+    chatForm.className = '' //and show chat form by removing hidden class
+}
+
 socket.on('new user', (msg) => {updateUserCount(msg.userCount); printMsg(msg, 'newUser') })
 socket.on('disconnected', (msg) => {updateUserCount(msg.userCount); printMsg(msg, 'userDisconnected')})
 socket.on('chat message', (msg) => {printMsg(msg, 'chatMsg')})
+socket.on('defaultName', (name) => {
+    defaultNicknameText.textContent = name;
+    defaultNickname = name;
+})
