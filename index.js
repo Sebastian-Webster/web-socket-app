@@ -15,31 +15,55 @@ app.get('/:file', (req, res) => {
 });
 
 const users = new Map();
+const joinedUsers = new Set();
+
+function sendUpdatedClientCount() {
+    io.emit('clientCount', joinedUsers.size);
+}
+
+function broadcastEmitToJoinedClients(event, data, initiatingSocketId) {
+    joinedUsers.forEach(socketId => {
+        console.log('Initiating:', initiatingSocketId)
+        console.log('Socket ID:', socketId)
+        console.log(initiatingSocketId === socketId)
+        if (socketId !== initiatingSocketId) {
+            io.to(socketId).emit(event, data)
+        }
+    })
+}
 
 io.on('connection', (socket) => {
-    let totalUser = io.engine.clientsCount;
     socket.emit('defaultName', socket.id)
     users.set(socket.id, socket.id.toString())
     socket.on('new user', () => {;
         //socket.broadcast.emit('new user', 'new user has joined the chat') //sends to all but the initiating socket
-        io.emit('new user', {userCount: totalUser, nickname: null, text: `Hello and welcome to this chat!`}) //send to only the initiating socket
+        socket.emit('new user', {nickname: null, text: `Hello and welcome to this chat!`}) //send to only the initiating socket
+        sendUpdatedClientCount()
     })
 
 
     socket.on('chat message', (msg) => {
-        io.emit('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User'}); //sends to all connected sockets
+        broadcastEmitToJoinedClients('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User'}, socket.id); //Sends to all clients who have joined except the initiating socket
     });
 
     socket.on('choose name', (name) => {
-        console.log(totalUser)
-        socket.emit('new user', {userCount: totalUser, nickname: name, text: 'has joined the chat'}) //sends to all but the initiating socket
+        socket.broadcast.emit('new user', {nickname: name, text: 'has joined the chat'}) //sends to all but the initiating socket
         users.set(socket.id, name)
+        joinedUsers.add(socket.id)
+        sendUpdatedClientCount()
     });    
 
     socket.on('disconnect', () => {
-        totalUser = io.engine.clientsCount;
-        io.emit('disconnected', {userCount: totalUser, nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
+        sendUpdatedClientCount()
+        joinedUsers.delete(socket.id)
+        io.emit('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
         
+    })
+
+    socket.on('useDefaultName', () => {
+        joinedUsers.add(socket.id)
+        socket.broadcast.emit('new user', {nickname: users.get(socket.id), text: 'has joined the chat'}) //sends to all but the initiating socket
+        sendUpdatedClientCount()
     })
 
 });  
