@@ -35,6 +35,7 @@ nameForm.addEventListener('submit', function (e) {
         socket.emit('choose name', nickname.value);
         nameForm.className = 'hidden' //remove name form once chosen
         chatForm.className = '' //and show chat form by removing hidden class
+        chatMessage.focus()
     }
 });
 
