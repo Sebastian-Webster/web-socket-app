@@ -10,6 +10,10 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+app.get('/:file', (req, res) => {
+    res.sendFile(__dirname + `/${req.params.file}`);
+  });
+
 io.on('connection', (socket) => {
     let totalUser = io.engine.clientsCount;
     socket.on('new user', () => {;
