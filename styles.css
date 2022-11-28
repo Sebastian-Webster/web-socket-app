@@ -10,7 +10,6 @@ header {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding-bottom: 10px;
 }
 
 header > h1 {
@@ -42,6 +41,11 @@ header > h1 {
     outline: none;
 }
 
+body.darkMode #chatMessage {
+    background-color: #2f2e2e;
+    color: white;
+}
+
 #chatForm>button {
     background: #333;
     border: none;
@@ -67,13 +71,23 @@ header > h1 {
     background: #efefef;
 }
 
+body.darkMode #messages {
+    background-color: black;
+    color: white;
+}
+
+body.darkMode #messages > li:nth-child(odd) {
+    background-color: #2f2e2e;
+    color: white;
+}
+
 #messages>li.newUser {
-    color: green;
+    color: green !important;
     font-style: italic;
 }
 
 #messages>li.userDisconnected {
-    color: red;
+    color: red !important;
     font-style: italic
 }
 
@@ -120,4 +134,25 @@ header > h1 {
 
 .rightChat {
     text-align: right;
+}
+
+body.darkMode {
+    background-color: black;
+}
+
+body.darkMode header {
+    background-color: black;
+    color: white;
+}
+
+.fa-sun {
+    color: yellow;
+}
+
+.fa-moon {
+    color: black;
+}
+
+header > i {
+    font-size: 28pt;
 }

@@ -9,7 +9,7 @@
 <body>
   <header>
     <h1>Chat App</h1>
-    <h1>Dark mode coming soon</h1>
+    <i id="themePicker" onclick="changePageTheme()"></i>
     <h1>Online: <span id="userCount">Loading...</span></h1>
   </header>
   <ul id="messages"></ul>
@@ -27,6 +27,7 @@
     </form>
   </div>
 
+  <script src="https://kit.fontawesome.com/e682e14782.js" crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="clientScript.js"></script>
 </body>

@@ -7,11 +7,50 @@ var nickname = document.getElementById('nickname');
 var defaultNicknameText = document.getElementById('defaultNickname');
 var nameForm = document.getElementById('nameForm');
 var nameFormContainer = document.getElementById('nameFormContainer')
+var themePicker = document.getElementById('themePicker')
 let defaultNickname = '';
+var theme = 'light'
 
 window.onload = () => {
-    socket.emit('new user')
-    nickname.focus()
+    socket.emit('new user');
+    nickname.focus();
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        console.log('Using dark theme')
+        initDarkMode();
+    } else {
+        console.log('Using light theme')
+        initLightMode();
+    }
+}
+
+window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (e.matches) {
+        console.log('Using dark theme')
+        initDarkMode()
+    } else {
+        console.log('Using light theme')
+        initLightMode()
+    }
+})
+
+function changePageTheme() {
+    if (theme === 'dark') {
+        initLightMode()
+    } else {
+        initDarkMode()
+    }
+}
+
+function initDarkMode() {
+    theme = 'dark'
+    document.body.classList.add('darkMode')
+    themePicker.className = 'fa-solid fa-sun';
+}
+
+function initLightMode() {
+    theme = 'light'
+    document.body.classList.remove('darkMode')
+    themePicker.className = 'fa-solid fa-moon'
 }
 
 function printMsg(msg, msgClasses = []) { //after socket recieves information for chat message

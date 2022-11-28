@@ -23,12 +23,15 @@ function sendUpdatedClientCount() {
 
 function broadcastEmitToJoinedClients(event, data, initiatingSocketId) {
     joinedUsers.forEach(socketId => {
-        console.log('Initiating:', initiatingSocketId)
-        console.log('Socket ID:', socketId)
-        console.log(initiatingSocketId === socketId)
         if (socketId !== initiatingSocketId) {
             io.to(socketId).emit(event, data)
         }
+    })
+}
+
+function emitToJoinedClients(event, data) {
+    joinedUsers.forEach(socketId => {
+        io.to(socketId).emit(event, data)
     })
 }
 
@@ -56,7 +59,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         sendUpdatedClientCount()
         joinedUsers.delete(socket.id)
-        io.emit('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
+        emitToJoinedClients('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
         
     })
 
