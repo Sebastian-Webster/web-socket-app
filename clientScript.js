@@ -106,7 +106,7 @@ nameForm.addEventListener('submit', function (e) {
 const setTypingTimeout = () => setTimeout(() => {
     typingTimeout = null;
     socket.emit('stopTyping')
-}, 10000)
+}, 2000)
 
 function handleStartTyping() {
     console.log('running')
