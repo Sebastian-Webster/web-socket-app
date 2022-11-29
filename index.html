@@ -14,8 +14,15 @@
   </header>
   <div id="messages"></div>
 
+  <template id="typingMessageTemplate">
+    <div id="typingMessageContainerTemplate">
+      <img src="assets/images/typingAnimation.gif"/>
+      <span id="typing-users"></span>
+    </div>
+  </template>
+
   <form id="chatForm" action="" class="hidden">
-    <input id="chatMessage" autocomplete="off" /><button>Send</button>
+    <input id="chatMessage" autocomplete="off" onkeypress="handleStartTyping()"/><button>Send</button>
   </form>
 
   <div id="nameFormContainer">

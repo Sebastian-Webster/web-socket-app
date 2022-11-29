@@ -165,3 +165,17 @@ header > i {
     color: gray;
     font-size: 12pt;
 }
+
+#typingMessageContainer {
+    display: flex;
+    align-items: center;
+}
+
+#typingMessageContainer > img {
+    height: 30px;
+    margin: 0px 20px;
+}
+
+body.darkMode #typingMessageContainer {
+    color: white;
+}

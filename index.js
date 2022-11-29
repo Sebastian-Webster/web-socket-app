@@ -17,11 +17,21 @@ app.get('/:file', (req, res) => {
     res.sendFile(__dirname + `/${req.params.file}`);
 });
 
+app.get('/assets/images/:file', (req, res) => {
+    res.sendFile(__dirname + `/assets/images/${req.params.file}`);
+});
+
 const users = new Map();
 const joinedUsers = new Set();
+const usersTyping = {};
 
 function sendUpdatedClientCount() {
     io.emit('clientCount', joinedUsers.size);
+}
+
+function sendUpdatedUsersTyping() {
+    console.log('Users Typing:', usersTyping)
+    emitToJoinedClients('usersTyping', usersTyping)
 }
 
 function broadcastEmitToJoinedClients(event, data, initiatingSocketId) {
@@ -49,20 +59,26 @@ io.on('connection', (socket) => {
 
 
     socket.on('chat message', (msg) => {
+        delete usersTyping[socket.id]
         broadcastEmitToJoinedClients('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User'}, socket.id); //Sends to all clients who have joined except the initiating socket
+        sendUpdatedUsersTyping()
     });
 
     socket.on('choose name', (name) => {
-        socket.broadcast.emit('new user', {nickname: name, text: 'has joined the chat'}) //sends to all but the initiating socket
+        broadcastEmitToJoinedClients('new user', {nickname: name, text: 'has joined the chat'}, socket.id) //sends to all but the initiating socket
         users.set(socket.id, name)
         joinedUsers.add(socket.id)
         sendUpdatedClientCount()
     });    
 
     socket.on('disconnect', () => {
+        if (joinedUsers.has(socket.id)) {
+            emitToJoinedClients('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
+        }
         joinedUsers.delete(socket.id)
+        delete usersTyping[socket.id]
         sendUpdatedClientCount()
-        emitToJoinedClients('disconnected', {nickname: users.get(socket.id) || 'Unknown User', text: 'has left the chat'}) //sends to all but the initiating socket
+        sendUpdatedUsersTyping()
         
     })
 
@@ -70,6 +86,16 @@ io.on('connection', (socket) => {
         joinedUsers.add(socket.id)
         socket.broadcast.emit('new user', {nickname: users.get(socket.id), text: 'has joined the chat'}) //sends to all but the initiating socket
         sendUpdatedClientCount()
+    })
+
+    socket.on('startTyping', () => {
+        usersTyping[socket.id] = users.get(socket.id) || 'Unknown User'
+        sendUpdatedUsersTyping()
+    })
+
+    socket.on('stopTyping', () => {
+        delete usersTyping[socket.id]
+        sendUpdatedUsersTyping()
     })
 
 });  

@@ -8,7 +8,10 @@ var defaultNicknameText = document.getElementById('defaultNickname');
 var nameForm = document.getElementById('nameForm');
 var nameFormContainer = document.getElementById('nameFormContainer')
 var themePicker = document.getElementById('themePicker')
+var typingMessageTemplate = document.getElementById('typingMessageTemplate');
+var typingUsersMessage = document.getElementById('typing-users')
 let defaultNickname = '';
+var typingTimeout;
 var theme = 'light'
 
 window.onload = () => {
@@ -82,6 +85,8 @@ chatForm.addEventListener('submit', function (e) {
     if (chatMessage.value) {
         printMsg(chatMessage.value, ['rightChat', 'self'])
         socket.emit('chat message', chatMessage.value);
+        clearTimeout(typingTimeout)
+        typingTimeout = null;
         chatMessage.value = '';
     }
 });
@@ -98,11 +103,58 @@ nameForm.addEventListener('submit', function (e) {
     }
 });
 
+const setTypingTimeout = () => setTimeout(() => {
+    typingTimeout = null;
+    socket.emit('stopTyping')
+}, 10000)
+
+function handleStartTyping() {
+    console.log('running')
+    if (typingTimeout) {
+        clearTimeout(typingTimeout)
+        typingTimeout = setTypingTimeout()
+        return
+    }
+
+    socket.emit('startTyping')
+    typingTimeout = setTypingTimeout()
+}
+
 function useDefaultNickname() {
     nameFormContainer.className = 'hidden' //remove name form once chosen
     chatForm.className = '' //and show chat form by removing hidden class
     socket.emit('useDefaultName')
     chatMessage.focus()
+}
+
+function updateTypingCount(usersObj) {
+    delete usersObj[socket.id]
+    console.log('Users Typing:', usersObj)
+    const peopleTyping = Object.values(usersObj)
+
+    var typingMessageContainer = document.getElementById('typingMessageContainer')
+
+    if (peopleTyping.length == 0) {
+        if (typingMessageContainer != null) {
+            typingMessageContainer.remove()
+        }
+    } else {
+        if (typingMessageContainer != null) {
+            typingMessageContainer.remove()
+        }
+        const typingMessageDiv = typingMessageTemplate.content.cloneNode(true).querySelector('div')
+        typingMessageDiv.id = 'typingMessageContainer'
+        const typingMessage = typingMessageDiv.querySelector('#typing-users')
+        if (peopleTyping.length == 1) {
+            typingMessage.textContent = `${peopleTyping[0]} is typing...`
+    
+        } else if (peopleTyping.length == 2) {
+            typingMessage.textContent = `${peopleTyping[0]} and ${peopleTyping[1]} are typing...`
+        } else if (peopleTyping.length > 2) {
+            typingMessage.textContent = `${peopleTyping.length} are typing...`
+        }
+        messages.appendChild(typingMessageDiv)
+    }
 }
 
 socket.on('new user', (msg) => {printMsg(msg, ['newUser', 'middleChat']) })
@@ -113,3 +165,4 @@ socket.on('defaultName', (name) => {
     defaultNickname = name;
 })
 socket.on('clientCount', updateUserCount)
+socket.on('usersTyping', updateTypingCount)
