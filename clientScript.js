@@ -54,8 +54,16 @@ function initLightMode() {
 }
 
 function printMsg(msg, msgClasses = []) { //after socket recieves information for chat message
-    var item = document.createElement('li');
-    item.textContent = msg.text ? msg.nickname ? msg.nickname + ': ' + msg.text : msg.text : msg
+    var item = document.createElement('span');
+    if (msg.nickname && msgClasses.includes('leftChat')) {
+        var nickname = document.createElement('span')
+        nickname.className = 'nickname'
+        nickname.textContent = msg.nickname
+        messages.append(nickname)
+        item.textContent = msg.text
+    } else {
+        item.textContent = msg.text ? msg.nickname ? msg.nickname + ': ' + msg.text : msg.text : msg
+    }
     item.classList.add('chatMsg')
     for (let classToAdd of msgClasses) {
         item.classList.add(classToAdd)
@@ -99,7 +107,7 @@ function useDefaultNickname() {
 
 socket.on('new user', (msg) => {printMsg(msg, ['newUser', 'middleChat']) })
 socket.on('disconnected', (msg) => {printMsg(msg, ['userDisconnected', 'middleChat'])})
-socket.on('chat message', (msg) => {printMsg(msg)})
+socket.on('chat message', (msg) => {printMsg(msg, ['leftChat'])})
 socket.on('defaultName', (name) => {
     defaultNicknameText.textContent = name;
     defaultNickname = name;

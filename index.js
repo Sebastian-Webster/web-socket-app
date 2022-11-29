@@ -5,6 +5,9 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+//TODO:
+//If the server restarts, the user is no longer a joined user and they can still send texts. To fix this, if socket connection is lost, tell the user the server has been disconnected and on reconnection get client to send nickname and other data to reinitiate socket
+
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');

@@ -61,14 +61,12 @@ body.darkMode #chatMessage {
     margin: 0;
     padding: 0;
     padding-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
 }
 
-#messages>li {
+#messages>span {
     padding: 0.5rem 1rem;
-}
-
-#messages>li:nth-child(odd) {
-    background: #efefef;
 }
 
 body.darkMode #messages {
@@ -76,22 +74,17 @@ body.darkMode #messages {
     color: white;
 }
 
-body.darkMode #messages > li:nth-child(odd) {
-    background-color: #2f2e2e;
-    color: white;
-}
-
-#messages>li.newUser {
+#messages>span.newUser {
     color: green !important;
     font-style: italic;
 }
 
-#messages>li.userDisconnected {
+#messages>span.userDisconnected {
     color: red !important;
     font-style: italic
 }
 
-#messages>li.self {
+#messages>span.self {
     font-weight: bold;
 }
 
@@ -133,7 +126,7 @@ body.darkMode #messages > li:nth-child(odd) {
 }
 
 .rightChat {
-    text-align: right;
+    align-self: flex-end;
 }
 
 body.darkMode {
@@ -155,4 +148,20 @@ body.darkMode header {
 
 header > i {
     font-size: 28pt;
+}
+
+.leftChat, .rightChat {
+    background-color: #1075e9;
+    width: max-content;
+    padding: 0.3rem 0.5rem;
+    margin: 0.2rem 0.5rem;
+    border-radius: 30px;
+    max-width: 50vw;
+    overflow-wrap: break-word;
+}
+
+.nickname {
+    padding: 0px;
+    color: gray;
+    font-size: 12pt;
 }
