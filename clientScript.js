@@ -56,16 +56,22 @@ function initLightMode() {
     themePicker.className = 'fa-solid fa-moon'
 }
 
+let lastNickname = null;
+
 function printMsg(msg, msgClasses = []) { //after socket recieves information for chat message
     var item = document.createElement('span');
     if (msg.nickname && msgClasses.includes('leftChat')) {
-        var nickname = document.createElement('span')
-        nickname.className = 'nickname'
-        nickname.textContent = msg.nickname
-        messages.append(nickname)
+        if (msg.nickname !== lastNickname) {
+            var nickname = document.createElement('span')
+            nickname.className = 'nickname'
+            nickname.textContent = msg.nickname
+            messages.append(nickname)
+        }
         item.textContent = msg.text
+        lastNickname = msg.nickname;
     } else {
         item.textContent = msg.text ? msg.nickname ? msg.nickname + ': ' + msg.text : msg.text : msg
+        lastNickname = null;
     }
     item.classList.add('chatMsg')
     for (let classToAdd of msgClasses) {
@@ -151,7 +157,7 @@ function updateTypingCount(usersObj) {
         } else if (peopleTyping.length == 2) {
             typingMessage.textContent = `${peopleTyping[0]} and ${peopleTyping[1]} are typing...`
         } else if (peopleTyping.length > 2) {
-            typingMessage.textContent = `${peopleTyping.length} are typing...`
+            typingMessage.textContent = `${peopleTyping.length} users are typing...`
         }
         messages.appendChild(typingMessageDiv)
     }
