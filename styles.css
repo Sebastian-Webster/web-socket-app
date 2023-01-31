@@ -179,3 +179,28 @@ header > i {
 body.darkMode #typingMessageContainer {
     color: white;
 }
+
+#nickname {
+    height: 30px;
+    width: 80%;
+    margin-block: 10px;
+    background-color: #d5d0d0;
+    border: 2px solid black;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 14pt;
+}
+
+#nickname:focus {
+    outline: none;
+}
+
+#nameFormContainer button, #nameFormContainer input[type="submit"] {
+    background-color: #d5d0d0;
+    border: 1px solid black;
+    border-radius: 10px;
+    margin-block: 10px;
+    padding: 10px 20px;
+    font-size: 12pt;
+    cursor: pointer;
+}
