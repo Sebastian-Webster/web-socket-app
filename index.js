@@ -61,6 +61,12 @@ io.on('connection', (socket) => {
         sendUpdatedClientCount()
     })
 
+    socket.on('joinAfterDisconnect', (nickname) => {
+        users.set(socket.id, nickname)
+        joinedUsers.add(socket.id)
+        sendUpdatedClientCount()
+    })
+
 
     socket.on('chat message', (msg) => {
         delete usersTyping[socket.id]

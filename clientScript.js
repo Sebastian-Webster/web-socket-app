@@ -19,6 +19,12 @@ const onlineContainer = document.getElementById('onlineContainer');
 const exitOnlineListButton = document.getElementById('exit-online-list');
 const onlineUserTemplate = document.getElementById('onlineUserTemplate');
 const onlineUsersList = document.getElementById('onlineUsersList');
+const disconnectedAlert = document.getElementById('disconnectedAlert')
+const tryingToReconnectText = document.getElementById('trying-to-reconnect')
+
+let tryingToReconnectTextInterval = null;
+
+let username = ''
 
 const mutedSocketIds = []
 
@@ -70,7 +76,7 @@ function printMsg(msg, msgClasses = []) { //after socket recieves information fo
     var item = document.createElement('span');
     if (msg.nickname && msgClasses.includes('leftChat')) {
         if (msg.nickname !== lastNickname) {
-            var nickname = document.createElement('span')
+            let nickname = document.createElement('span')
             nickname.className = 'nickname'
             nickname.textContent = msg.nickname
             messages.append(nickname)
@@ -121,6 +127,7 @@ nameForm.addEventListener('submit', function (e) {
     e.preventDefault();
     if (nickname.value) {
         socket.emit('choose name', nickname.value);
+        username = nickname.value
         nameFormContainer.className = 'hidden' //remove name form once chosen
         chatForm.className = '' //and show chat form by removing hidden class
         chatMessage.focus()
@@ -150,6 +157,7 @@ function useDefaultNickname() {
     nameFormContainer.className = 'hidden' //remove name form once chosen
     chatForm.className = '' //and show chat form by removing hidden class
     socket.emit('useDefaultName')
+    username = defaultNickname
     chatMessage.focus()
 }
 
@@ -192,6 +200,29 @@ socket.on('defaultName', (name) => {
 })
 socket.on('clientCount', updateUserCount)
 socket.on('usersTyping', updateTypingCount)
+
+socket.on("disconnect", () => {
+    disconnectedAlert.style.display = 'flex';
+
+    tryingToReconnectTextInterval = setInterval(() => {
+        if (tryingToReconnectText.textContent === 'Trying to reconnect.') {
+            tryingToReconnectText.textContent = 'Trying to reconnect..'
+        } else if (tryingToReconnectText.textContent === 'Trying to reconnect..') {
+            tryingToReconnectText.textContent = 'Trying to reconnect...'
+        } else {
+            tryingToReconnectText.textContent = 'Trying to reconnect.'
+        }
+    }, 400)
+})
+
+socket.io.on('reconnect', () => {
+    disconnectedAlert.style.display = 'none'
+    socket.emit('joinAfterDisconnect', username)
+    if (tryingToReconnectTextInterval != null) {
+        clearInterval(tryingToReconnectTextInterval)
+        tryingToReconnectTextInterval = null;
+    }
+})
 
 function removeAllChildElements(parent) {
     while (parent.firstChild) {
