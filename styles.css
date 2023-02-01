@@ -140,10 +140,12 @@ body.darkMode header {
 
 .fa-sun {
     color: yellow;
+    cursor: pointer;
 }
 
 .fa-moon {
     color: black;
+    cursor: pointer;
 }
 
 header > i {
@@ -204,4 +206,63 @@ body.darkMode #typingMessageContainer {
     padding: 10px 20px;
     font-size: 12pt;
     cursor: pointer;
+}
+
+#onlineHeader {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#onlineContainer {
+    position: absolute;
+    top: 0px;
+    z-index: 3;
+    height: 100vh;
+    width: 100vw;
+    display: none;
+    background-color: white;
+    justify-content: center;
+    align-items: center;
+}
+
+body.darkMode #onlineContainer {
+    background-color: black;
+}
+
+#onlineList {
+    border-color: black;
+    height: 70vh;
+    width: min(90vw, 70vh);
+    overflow: scroll;
+    border-width: 2px;
+    border-radius: 30px;
+    border-style: solid;
+    color: black;
+}
+
+body.darkMode #onlineList {
+    border-color: white;
+    color: white;
+}
+
+#exit-online-list {
+    cursor: pointer;
+    text-align: right;
+    margin-right: 10px;
+    position: sticky;
+    top: 0px;
+}
+
+.onlineUserItem {
+    border: 2px solid black;
+    border-left: none;
+    border-right: none;
+}
+
+body.darkMode .onlineUserItem {
+    border: 2px solid white;
+}
+
+#onlineUsersList {
+    padding: 0px;
 }

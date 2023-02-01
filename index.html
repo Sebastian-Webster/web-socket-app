@@ -10,7 +10,7 @@
   <header>
     <h1>Chat App</h1>
     <i id="themePicker" onclick="changePageTheme()"></i>
-    <h1>Online: <span id="userCount">Loading...</span></h1>
+    <h1 id="onlineHeader">Online: <span id="userCount">Loading...</span></h1>
   </header>
   <div id="messages"></div>
 
@@ -32,6 +32,19 @@
       <input type="submit" value="Send"/>
       <button onclick="useDefaultNickname()">Or use default nickname: <span id="defaultNickname">Loading...</span></button>
     </form>
+  </div>
+
+  <template id="onlineUserTemplate">
+    <div class="onlineUserItem">
+      <h1 class="onlineUser-Username"></h1>
+    </div>
+  </template>
+
+  <div id="onlineContainer">
+    <div id="onlineList">
+      <h1 id="exit-online-list">X</h1>
+      <ul id="onlineUsersList"></ul>
+    </div>
   </div>
 
   <script src="https://kit.fontawesome.com/e682e14782.js" crossorigin="anonymous"></script>

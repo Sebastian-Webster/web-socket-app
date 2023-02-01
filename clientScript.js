@@ -14,6 +14,14 @@ let defaultNickname = '';
 var typingTimeout;
 var theme = 'light'
 
+const onlineHeader = document.getElementById('onlineHeader');
+const onlineContainer = document.getElementById('onlineContainer');
+const exitOnlineListButton = document.getElementById('exit-online-list');
+const onlineUserTemplate = document.getElementById('onlineUserTemplate');
+const onlineUsersList = document.getElementById('onlineUsersList');
+
+const mutedSocketIds = []
+
 window.onload = () => {
     socket.emit('new user');
     nickname.focus();
@@ -81,9 +89,21 @@ function printMsg(msg, msgClasses = []) { //after socket recieves information fo
     window.scrollTo(0, document.body.scrollHeight);
 }
 //updates the count of total user in the chat
-function updateUserCount(userCount) {
-    document.getElementById("userCount").innerHTML = userCount;
-    
+function updateUserCount(users) {
+    console.log('Received online users:', users)
+    removeAllChildElements(onlineUsersList)
+
+    const userIds = Object.keys(users) //Will be used later for hiding/showing messages from specific people
+    const nicknames = Object.values(users)
+
+    for (let i = 0; i < nicknames.length; i++) {
+        const onlineUserItem = onlineUserTemplate.content.cloneNode(true).querySelector('.onlineUserItem')
+        onlineUserItem.id = `onlineUserNum-${i}`
+        onlineUserItem.querySelector('.onlineUser-Username').textContent = i + 1 + ': ' + nicknames[i]
+        onlineUsersList.appendChild(onlineUserItem)
+    }
+
+    document.getElementById("userCount").innerHTML = nicknames.length;
 }
 
 chatForm.addEventListener('submit', function (e) {
@@ -172,3 +192,18 @@ socket.on('defaultName', (name) => {
 })
 socket.on('clientCount', updateUserCount)
 socket.on('usersTyping', updateTypingCount)
+
+function removeAllChildElements(parent) {
+    while (parent.firstChild) {
+        parent.lastChild.remove()
+    }
+}
+
+onlineHeader.addEventListener('click', (e) => {
+    onlineContainer.style.display = 'flex'
+})
+
+exitOnlineListButton.addEventListener('click', (e) => {
+    onlineContainer.style.display = 'none'
+    removeAllChildElements(onlineUsersList)
+})

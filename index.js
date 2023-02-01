@@ -26,7 +26,11 @@ const joinedUsers = new Set();
 const usersTyping = {};
 
 function sendUpdatedClientCount() {
-    io.emit('clientCount', joinedUsers.size);
+    const toSend = {}
+    joinedUsers.forEach(user => {
+        toSend[user] = users.get(user)
+    })
+    io.emit('clientCount', toSend);
 }
 
 function sendUpdatedUsersTyping() {
@@ -60,7 +64,7 @@ io.on('connection', (socket) => {
 
     socket.on('chat message', (msg) => {
         delete usersTyping[socket.id]
-        broadcastEmitToJoinedClients('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User'}, socket.id); //Sends to all clients who have joined except the initiating socket
+        broadcastEmitToJoinedClients('chat message', {text: msg, nickname: users.get(socket.id) || 'Unknown User', socketId: socket.id}, socket.id); //Sends to all clients who have joined except the initiating socket
         sendUpdatedUsersTyping()
     });
 
@@ -97,7 +101,6 @@ io.on('connection', (socket) => {
         delete usersTyping[socket.id]
         sendUpdatedUsersTyping()
     })
-
 });  
 
 server.listen(3000, () => {
