@@ -71,6 +71,7 @@ function initLightMode() {
 }
 
 let lastNickname = null;
+let lastKnownUserCount = [];
 
 function printMsg(msg, msgClasses = []) { //after socket recieves information for chat message
     var item = document.createElement('span');
@@ -96,6 +97,7 @@ function printMsg(msg, msgClasses = []) { //after socket recieves information fo
 }
 //updates the count of total user in the chat
 function updateUserCount(users) {
+    lastKnownUserCount = users;
     console.log('Received online users:', users)
     removeAllChildElements(onlineUsersList)
 
@@ -232,6 +234,7 @@ function removeAllChildElements(parent) {
 
 onlineHeader.addEventListener('click', (e) => {
     onlineContainer.style.display = 'flex'
+    updateUserCount(lastKnownUserCount)
 })
 
 exitOnlineListButton.addEventListener('click', (e) => {
